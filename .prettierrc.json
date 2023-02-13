@@ -1,0 +1,37 @@
+{
+    "arrowParens": "avoid",
+    "bracketSpacing": true,
+    "htmlWhitespaceSensitivity": "css",
+    "insertPragma": false,
+    "jsxBracketSameLine": false,
+    "jsxSingleQuote": true,
+    "printWidth": 80,
+    "proseWrap": "always",
+    "quoteProps": "as-needed",
+    "requirePragma": false,
+    "semi": false,
+    "singleQuote": true,
+    "tabWidth": 2,
+    "trailingComma": "all",
+    "useTabs": false,
+    "overrides": [
+      {
+        "files": "*.html",
+        "options": {
+          "tabWidth": 4
+        }
+      },
+      {
+        "files": "*.svelte",
+        "options": {
+          "tabWidth": 4
+        }
+      },
+      {
+        "files": "*.ts",
+        "options": {
+          "tabWidth": 4
+        }
+      }
+    ]
+  }

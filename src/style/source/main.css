@@ -1,0 +1,62 @@
+:root {
+  --black: #1f1d22;
+  --white: #d3ced8;
+  --white2: #fcf1ff;
+  --violet: #7f5af0;
+  --violet50: #7f5af080;
+  --violet15: #7f5af026;
+  --violet-dark: #6f44ee;
+  --violet-darker: #312456;
+  --violet-glow: #9274ee;
+  --orange: #eb5e28;
+  --orange-dark: #e95216;
+  --orange-glow: #eb6928;
+  --blue-green: #39c081;
+  --red: #e30219;
+  --font-family: 'Roboto', sans-serif;
+  --font-size-xxxs: 0.5rem;
+  --font-size-xxs: 0.625rem;
+  --font-size-xs: 0.75rem;
+  --font-size-s: 0.875rem;
+  --font-size-m: 1rem;
+  --font-size-l: 1.125rem;
+  --font-size-xl: 1.25rem;
+  --font-size-xxl: 1.5rem;
+  --font-size-xxxl: 2rem;
+  --font-size-number-button: 3.6rem;
+  --font-size-number-button-mobile: 2.4rem;
+  --font-weight-regular: 400;
+  --font-weight-bold: 700;
+  --gap-xxs: 0.25em;
+  --gap-xs: 0.5em;
+  --gap-s: 0.75em;
+  --gap-m: 1em;
+  --gap-l: 1.25em;
+  --gap-xl: 1.5em;
+  --gap-xxl: 2em;
+  --border-radius: 0.25em;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  font-family: inherit;
+}
+
+html {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  grid-template-columns: 1fr;
+  row-gap: var(--gap-xl);
+  margin: 0;
+  background: var(--black);
+  min-height: 100vh;
+  color: var(--white);
+  font-family: var(--font-family);
+}

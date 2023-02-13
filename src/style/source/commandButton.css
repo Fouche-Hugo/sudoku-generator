@@ -1,0 +1,57 @@
+button {
+  display: flex;
+  position: relative;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  border: 1px solid var(--violet);
+  border-radius: var(--border-radius);
+  background: transparent;
+  isolation: isolate;
+  aspect-ratio: 1;
+  width: 90%;
+  overflow: hidden;
+}
+
+button::before,
+button::after {
+  --square-root-2: 1.4142;
+  --square-width: calc(100% * var(--square-root-2));
+
+  position: absolute;
+  z-index: -1;
+  transition: transform 0.5s ease-in-out;
+  background: var(--violet);
+  content: '';
+}
+
+button::before {
+  bottom: calc(1px + var(--square-width) / -2);
+  left: calc(1px + var(--square-width) / -2);
+  transform: translate(
+          calc(var(--square-width) / -4),
+          calc(var(--square-width) / 4)
+      )
+      rotate(-45deg);
+  width: var(--square-width);
+  height: var(--square-width);
+}
+
+button::after {
+  top: calc(var(--square-width) / -2);
+  right: calc(var(--square-width) / -2);
+  transform: translate(
+          calc(var(--square-width) / 4),
+          calc(var(--square-width) / -4)
+      )
+      rotate(-45deg);
+  width: var(--square-width);
+  height: var(--square-width);
+}
+
+button:hover::before,
+button:hover::after,
+button:focus::before,
+button:focus::after {
+  transform: translate(0, 0) rotate(-45deg);
+}
