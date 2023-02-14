@@ -17,8 +17,20 @@
     function handleEraseButtonClick() {
         dispatch('eraseButtonClick')
     }
+
+    function handleNumberKeyboard(event) {
+        const value = parseInt(event.key)
+        if (value >= 1 && value <= 9) {
+            handleInputNumberClick(value)
+        }
+        const key = event.key
+        if (key === 'Backspace' || key === 'Delete') {
+            handleEraseButtonClick()
+        }
+    }
 </script>
 
+<svelte:window on:keydown={handleNumberKeyboard} />
 <div class="input-menu">
     {#each Array(9) as _, i}
         <InputNumber

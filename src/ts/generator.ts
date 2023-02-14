@@ -283,12 +283,12 @@ export async function generateSudoku(
             } else {
                 board = JSON.parse(JSON.stringify(boardCopy))
                 numberOfTimeouts++
-                if (numberOfTimeouts > 2) {
+                if (numberOfTimeouts > 0) {
                     numberOfFilledPositionsCorrect = true
                 }
             }
         }
-        if (numberOfTimeouts > 2) {
+        if (numberOfTimeouts > 0) {
             board = await generateSudoku(objective, timeout)
         }
         resolve(board)
