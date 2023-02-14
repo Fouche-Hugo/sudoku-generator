@@ -17,35 +17,32 @@ async function counterBacktrack(
         number,
     ][],
 ): Promise<boolean> {
-    return new Promise((resolve, reject) => {
-        const [newX, newY] = nextEmptyPosition(x, y, board)
+    const [newX, newY] = nextEmptyPosition(x, y, board)
 
-        if (newY === 9) {
-            solutionsCounter++
-            if (solutionsCounter === 2) {
-                resolve(true)
-            }
-            resolve(false)
+    if (newY === 9) {
+        solutionsCounter++
+        if (solutionsCounter === 2) {
+            return true
         }
+        return false
+    }
 
-        for (let i = 1; i < 10; i++) {
-            const newValue = i
-            if (validChange(newX, newY, newValue, board)) {
-                board[newY][newX] = newValue
-                counterBacktrack(newX, newY, board).then(result => {
-                    if (result) {
-                        resolve(true)
-                    }
-                    board[newY][newX] = -1
-                })
-            }
+    for (let i = 1; i < 10; i++) {
+        const newValue = i
+        if (validChange(newX, newY, newValue, board)) {
+            board[newY][newX] = newValue
+            const result = await counterBacktrack(newX, newY, board)
+                if (result) {
+                    return true
+                }
+                board[newY][newX] = -1
         }
+    }
 
-        resolve(false)
-    })
+    return false
 }
 
-export async function sudokuHasUniqueSolution(
+async function sudokuHasUniqueSolution(
     board: [
         number,
         number,
@@ -58,15 +55,11 @@ export async function sudokuHasUniqueSolution(
         number,
     ][],
 ): Promise<boolean> {
-    return new Promise(async (resolve, reject) => {
         await timeoutAsync(10)
         solutionsCounter = 0
-        counterBacktrack(0, 0, JSON.parse(JSON.stringify(board))).then(
-            result => {
-                resolve(solutionsCounter === 1)
-            },
-        )
-    })
+        await counterBacktrack(0, 0, JSON.parse(JSON.stringify(board)))
+        
+        return solutionsCounter === 1
 }
 
 function positionsList(): [number, number][] {
@@ -127,40 +120,37 @@ async function emptySudoku(
     objective: number,
     time: number,
 ): Promise<void> {
-    return new Promise(async (resolve, reject) => {
-        let positions = positionsList()
-        let startingTime = Date.now()
+    let positions = positionsList()
+    let startingTime = Date.now()
 
-        for (let i = 0; i < 81 - objective; i++) {
-            let positionIndex = Math.floor(Math.random() * positions.length)
-            let x = positions[positionIndex][0]
-            let y = positions[positionIndex][1]
+    for (let i = 0; i < 81 - objective; i++) {
+        let positionIndex = Math.floor(Math.random() * positions.length)
+        let x = positions[positionIndex][0]
+        let y = positions[positionIndex][1]
 
-            let previousValue = board[y][x]
+        let previousValue = board[y][x]
+        board[y][x] = -1
+
+        let hasUniqueSolution = await sudokuHasUniqueSolution(board)
+
+        while (!hasUniqueSolution) {
+            if (time !== -1 && Date.now() - startingTime > time) {
+                console.log('Time out')
+                return
+            }
+            board[y][x] = previousValue
+
+            positionIndex = Math.floor(Math.random() * positions.length)
+            x = positions[positionIndex][0]
+            y = positions[positionIndex][1]
+
+            previousValue = board[y][x]
             board[y][x] = -1
 
-            let hasUniqueSolution = await sudokuHasUniqueSolution(board)
-
-            while (!hasUniqueSolution) {
-                if (time !== -1 && Date.now() - startingTime > time) {
-                    console.log('Time out')
-                    resolve()
-                }
-                board[y][x] = previousValue
-
-                positionIndex = Math.floor(Math.random() * positions.length)
-                x = positions[positionIndex][0]
-                y = positions[positionIndex][1]
-
-                previousValue = board[y][x]
-                board[y][x] = -1
-
-                hasUniqueSolution = await sudokuHasUniqueSolution(board)
-            }
-            positions.splice(positionIndex, 1)
+            hasUniqueSolution = await sudokuHasUniqueSolution(board)
         }
-        resolve()
-    })
+        positions.splice(positionIndex, 1)
+    }
 }
 
 function initSudoku(): [
@@ -258,6 +248,8 @@ export async function generateSudoku(
             number,
         ][] = []
 
+        // wait for 100ms to let svelte update the DOM
+        await timeoutAsync(100)
         let fullGridCorrect = false
 
         while (!fullGridCorrect) {
@@ -275,6 +267,7 @@ export async function generateSudoku(
 
         let numberOfFilledPositionsCorrect = false
         let boardCopy: number[][] = JSON.parse(JSON.stringify(board))
+        let numberOfTimeouts = 0
 
         while (!numberOfFilledPositionsCorrect) {
             await timeoutAsync(10)
@@ -289,8 +282,68 @@ export async function generateSudoku(
                 numberOfFilledPositionsCorrect = true
             } else {
                 board = JSON.parse(JSON.stringify(boardCopy))
+                numberOfTimeouts++
+                if (numberOfTimeouts > 2) {
+                    numberOfFilledPositionsCorrect = true
+                }
             }
+        }
+        if (numberOfTimeouts > 2) {
+            board = await generateSudoku(objective, timeout)
         }
         resolve(board)
     })
 }
+
+// console.log('Test')
+// // create a board that has more than one solution
+// const board: [
+//     number,
+//     number,
+//     number,
+//     number,
+//     number,
+//     number,
+//     number,
+//     number,
+//     number,
+// ][] = [
+//     [-1, 6, -1, 5, -1, 4, -1, -1, -1],
+//     [-1, -1, 2, -1, 1, -1, -1, -1, -1],
+//     [-1, -1, -1, -1, -1, -1, 1, 9, -1],
+//     [-1, -1, 4, -1, -1, -1, 7, 6, -1],
+//     [8, -1, -1, -1, 3, -1, -1, 1, -1],
+//     [-1, -1, -1, 6, 7, -1, -1, -1, -1],
+//     [-1, 2, -1, 7, -1, -1, 8, -1, -1],
+//     [3, 5, -1, 9, 4, 8, 6, -1, -1],
+//     [-1, -1, 8, 2, -1, -1, 5, -1, -1]]
+
+
+// const boardUniqueSolution: [
+//     number,
+//     number,
+//     number,
+//     number,
+//     number,
+//     number,
+//     number,
+//     number,
+//     number,
+// ][] = [[5,3,-1,-1,7,-1,-1,-1,-1],
+//     [6,-1,-1,1,9,5,-1,-1,-1],
+//     [-1,9,8,-1,-1,-1,-1,6,-1],
+//     [8,-1,-1,-1,6,-1,-1,-1,3],
+//     [4,-1,-1,8,-1,3,-1,-1,1],
+//     [7,-1,-1,-1,2,-1,-1,-1,6],
+//     [-1,6,-1,-1,-1,-1,2,8,-1],
+//     [-1,-1,-1,4,1,9,-1,-1,5],
+//     [-1,-1,-1,-1,8,-1,-1,7,9]]
+
+// sudokuHasUniqueSolution(board).then((result) => {
+//     console.log(result)
+// })
+
+
+// sudokuHasUniqueSolution(boardUniqueSolution).then((result) => {
+//     console.log(result)
+// })
