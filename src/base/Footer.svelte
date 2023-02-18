@@ -1,7 +1,7 @@
 <footer>
     <div>
         <span>© By Hugo Fouché</span>
-        <a href="/">
+        <a href="https://github.com/Fouche-Hugo/sudoku-generator">
             <img src="/github.svg" alt="logo" />
         </a>
     </div>
