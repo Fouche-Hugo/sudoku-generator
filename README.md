@@ -17,7 +17,7 @@ Le site est [disponible ici](https://sudoku.fouche-hugo.fr/).
 ### Description
 A website for playing the sudoku game with random generated grids and an integrated solver.
 
-### Utilisation
+### Usage
 The website is [available here](https://sudoku.fouche-hugo.fr/).
 
 ### Technologies used
